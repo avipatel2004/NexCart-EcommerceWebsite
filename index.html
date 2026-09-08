@@ -1,798 +1,373 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NexCart — Modern Django E-Commerce Marketplace</title>
-  <meta name="description" content="NexCart is a full-stack Django e-commerce marketplace featuring product discovery, cart management, Razorpay payment integration, and seller operations.">
-
-  <!-- Google Fonts & FontAwesome -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <style>
-    :root {
-      --bg-dark: #0b0f19;
-      --bg-card: rgba(19, 26, 43, 0.7);
-      --bg-card-border: rgba(255, 255, 255, 0.08);
-      --accent-primary: #6366f1;
-      --accent-secondary: #8b5cf6;
-      --accent-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --success: #10b981;
-      --warning: #f59e0b;
-      --radius-lg: 16px;
-      --radius-sm: 8px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      line-height: 1.6;
-      overflow-x: hidden;
-      background-image: 
-        radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
-        radial-gradient(circle at 85% 65%, rgba(236, 72, 153, 0.12) 0%, transparent 45%);
-    }
-
-    /* Glassmorphic Navbar */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      background: rgba(11, 15, 25, 0.85);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--bg-card-border);
-      padding: 1rem 2rem;
-    }
-
-    .nav-container {
-      max-width: 1280px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .brand-logo {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: #fff;
-      text-decoration: none;
-    }
-
-    .brand-logo i {
-      background: var(--accent-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      align-items: center;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 0.95rem;
-      transition: color 0.2s ease;
-    }
-
-    .nav-links a:hover {
-      color: #fff;
-    }
-
-    .btn-github {
-      background: var(--accent-gradient);
-      color: #fff !important;
-      padding: 0.6rem 1.4rem;
-      border-radius: 30px;
-      font-weight: 600 !important;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
-      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
-    }
-
-    .btn-github:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 25px rgba(99, 102, 241, 0.6);
-    }
-
-    /* Hero Section */
-    .hero {
-      max-width: 1280px;
-      margin: 4rem auto 2rem;
-      padding: 0 2rem;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      align-items: center;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.4rem 1rem;
-      background: rgba(99, 102, 241, 0.15);
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      border-radius: 20px;
-      color: #a5b4fc;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-    }
-
-    .hero-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 3.5rem;
-      font-weight: 800;
-      line-height: 1.15;
-      margin-bottom: 1.25rem;
-    }
-
-    .hero-title span {
-      background: var(--accent-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero-subtitle {
-      font-size: 1.15rem;
-      color: var(--text-muted);
-      margin-bottom: 2rem;
-      max-width: 90%;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
-
-    .btn-primary {
-      background: var(--accent-gradient);
-      color: #fff;
-      padding: 0.85rem 1.8rem;
-      border-radius: var(--radius-sm);
-      text-decoration: none;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(168, 85, 247, 0.6);
-    }
-
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--bg-card-border);
-      color: #fff;
-      padding: 0.85rem 1.8rem;
-      border-radius: var(--radius-sm);
-      text-decoration: none;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      transition: background 0.2s;
-    }
-
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    /* Hero Card Preview */
-    .hero-preview-card {
-      background: var(--bg-card);
-      border: 1px solid var(--bg-card-border);
-      border-radius: var(--radius-lg);
-      padding: 1.5rem;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-      backdrop-filter: blur(12px);
-      position: relative;
-    }
-
-    .preview-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--bg-card-border);
-      margin-bottom: 1.5rem;
-    }
-
-    .window-dots {
-      display: flex;
-      gap: 6px;
-    }
-
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-    }
-    .dot-red { background: #ef4444; }
-    .dot-yellow { background: #f59e0b; }
-    .dot-green { background: #10b981; }
-
-    .preview-tag {
-      font-size: 0.75rem;
-      color: #38bdf8;
-      background: rgba(56, 189, 248, 0.1);
-      padding: 0.2rem 0.6rem;
-      border-radius: 4px;
-    }
-
-    /* Stats Grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem;
-      max-width: 1280px;
-      margin: 3rem auto;
-      padding: 0 2rem;
-    }
-
-    .stat-card {
-      background: var(--bg-card);
-      border: 1px solid var(--bg-card-border);
-      padding: 1.5rem;
-      border-radius: var(--radius-lg);
-      text-align: center;
-    }
-
-    .stat-num {
-      font-family: 'Outfit', sans-serif;
-      font-size: 2.2rem;
-      font-weight: 800;
-      color: #fff;
-    }
-
-    .stat-label {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-
-    /* Feature Showcase Grid */
-    .section-title {
-      text-align: center;
-      margin: 5rem 0 1rem;
-    }
-
-    .section-title h2 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 2.5rem;
-      font-weight: 800;
-    }
-
-    .section-title p {
-      color: var(--text-muted);
-      font-size: 1.1rem;
-    }
-
-    .features-grid {
-      max-width: 1280px;
-      margin: 3rem auto;
-      padding: 0 2rem;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2rem;
-    }
-
-    .feature-card {
-      background: var(--bg-card);
-      border: 1px solid var(--bg-card-border);
-      border-radius: var(--radius-lg);
-      padding: 2rem;
-      transition: transform 0.3s ease, border-color 0.3s ease;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(99, 102, 241, 0.4);
-    }
-
-    .feature-icon {
-      width: 54px;
-      height: 54px;
-      border-radius: 14px;
-      background: rgba(99, 102, 241, 0.15);
-      color: #818cf8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      margin-bottom: 1.25rem;
-    }
-
-    .feature-card h3 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin-bottom: 0.75rem;
-    }
-
-    .feature-card p {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
-
-    /* Interactive Demo Storefront */
-    .storefront-demo {
-      max-width: 1280px;
-      margin: 4rem auto;
-      padding: 0 2rem;
-    }
-
-    .demo-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-    }
-
-    .category-tabs {
-      display: flex;
-      gap: 0.5rem;
-      background: rgba(255, 255, 255, 0.03);
-      padding: 0.3rem;
-      border-radius: 30px;
-      border: 1px solid var(--bg-card-border);
-    }
-
-    .tab-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      padding: 0.5rem 1.2rem;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s;
-    }
-
-    .tab-btn.active {
-      background: var(--accent-primary);
-      color: #fff;
-    }
-
-    .cart-indicator {
-      background: rgba(99, 102, 241, 0.2);
-      border: 1px solid rgba(99, 102, 241, 0.4);
-      padding: 0.5rem 1.2rem;
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      font-weight: 600;
-    }
-
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem;
-    }
-
-    .product-card {
-      background: var(--bg-card);
-      border: 1px solid var(--bg-card-border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      transition: transform 0.2s ease;
-    }
-
-    .product-card:hover {
-      transform: translateY(-4px);
-    }
-
-    .product-img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      background: #1e293b;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3rem;
-      color: #64748b;
-    }
-
-    .product-details {
-      padding: 1.25rem;
-    }
-
-    .product-cat {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #a855f7;
-      font-weight: 700;
-    }
-
-    .product-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      margin: 0.4rem 0 0.8rem;
-    }
-
-    .product-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .product-price {
-      font-size: 1.2rem;
-      font-weight: 800;
-      color: #38bdf8;
-    }
-
-    .btn-add-cart {
-      background: rgba(99, 102, 241, 0.2);
-      border: 1px solid var(--accent-primary);
-      color: #fff;
-      padding: 0.4rem 0.8rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background 0.2s;
-    }
-
-    .btn-add-cart:hover {
-      background: var(--accent-primary);
-    }
-
-    /* Installation Code Box */
-    .install-section {
-      max-width: 900px;
-      margin: 4rem auto;
-      padding: 0 2rem;
-    }
-
-    .code-box {
-      background: #0f172a;
-      border: 1px solid var(--bg-card-border);
-      border-radius: var(--radius-lg);
-      padding: 1.5rem;
-      font-family: monospace;
-      color: #38bdf8;
-      font-size: 0.95rem;
-      line-height: 1.8;
-      position: relative;
-    }
-
-    .copy-btn {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: rgba(255,255,255,0.1);
-      border: none;
-      color: #fff;
-      padding: 0.4rem 0.8rem;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.8rem;
-    }
-
-    /* Footer */
-    footer {
-      border-top: 1px solid var(--bg-card-border);
-      padding: 3rem 2rem;
-      text-align: center;
-      margin-top: 6rem;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-
-    footer a {
-      color: var(--accent-primary);
-      text-decoration: none;
-    }
-
-    @media (max-width: 1024px) {
-      .hero { grid-template-columns: 1fr; }
-      .product-grid { grid-template-columns: repeat(2, 1fr); }
-      .features-grid { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexCart - Online Marketplace</title>
+    <meta name="description" content="Discover products from verified sellers in one trusted online marketplace. Shop with confidence, save more at NexCart.">
+
+    <link rel="icon" href="static/images/logo.jpeg" type="image/jpeg">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Main Project CSS -->
+    <link rel="stylesheet" href="static/css/style.css">
+
+    <style>
+        /* Interactive Enhancements for GitHub Pages Presentation */
+        .toast-notification {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #0B2A4A;
+            color: #FFFFFF;
+            padding: 14px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            z-index: 9999;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        .toast-notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .toast-notification i {
+            color: #10B981;
+            font-size: 1.3rem;
+        }
+        .cart-badge-count {
+            background: #DC2626;
+            color: #FFF;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 999px;
+            margin-left: 4px;
+        }
+        .product-image-placeholder {
+            width: 100%;
+            height: 220px;
+            background: #E2E8F0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: #94A3B8;
+        }
+        .product-image-wrap img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+    </style>
 </head>
 <body>
 
-  <!-- Navigation Bar -->
-  <header>
-    <div class="nav-container">
-      <a href="#" class="brand-logo">
-        <i class="fa-solid fa-bag-shopping"></i> NexCart
-      </a>
-      <ul class="nav-links">
-        <li><a href="#features">Features</a></li>
-        <li><a href="#demo">Live Demo</a></li>
-        <li><a href="#architecture">Stack</a></li>
-        <li><a href="#setup">Setup</a></li>
-        <li>
-          <a href="https://github.com/avipatel2004/NexCart-EcommerceWebsite" target="_blank" class="btn-github">
-            <i class="fa-brands fa-github"></i> GitHub Repo
-          </a>
-        </li>
-      </ul>
-    </div>
-  </header>
-
-  <!-- Hero Section -->
-  <section class="hero">
-    <div>
-      <div class="hero-badge">
-        <i class="fa-solid fa-bolt"></i> Django 6.0 E-Commerce Marketplace
-      </div>
-      <h1 class="hero-title">
-        The Next Generation <span>Digital Commerce</span> Platform.
-      </h1>
-      <p class="hero-subtitle">
-        NexCart is a full-featured digital storefront engineered with Django, featuring automated product discovery, shopping cart processing, vendor management, and Razorpay payments.
-      </p>
-      <div class="hero-actions">
-        <a href="https://github.com/avipatel2004/NexCart-EcommerceWebsite" target="_blank" class="btn-primary">
-          <i class="fa-brands fa-github"></i> View Repository
-        </a>
-        <a href="#demo" class="btn-secondary">
-          <i class="fa-solid fa-store"></i> Explore Storefront Demo
-        </a>
-      </div>
-    </div>
-
-    <!-- Glassmorphic Preview Window -->
-    <div class="hero-preview-card">
-      <div class="preview-header">
-        <div class="window-dots">
-          <div class="dot dot-red"></div>
-          <div class="dot dot-yellow"></div>
-          <div class="dot dot-green"></div>
+    <!-- Trust / Notification Strip -->
+    <div class="topbar">
+        <div class="container">
+            <span><i class="fa-solid fa-truck-fast"></i> Free delivery on orders over ₹499</span>
+            <span><i class="fa-solid fa-shield-halved"></i> 100% Verified Sellers</span>
+            <span><i class="fa-solid fa-lock"></i> Secure Payments &amp; COD</span>
         </div>
-        <div class="preview-tag"><i class="fa-solid fa-server"></i> Django REST & Storefront</div>
-      </div>
-      <div style="display:flex; flex-direction:column; gap: 1rem;">
-        <div style="display:flex; justify-content:space-between; align-items:center; background: rgba(255,255,255,0.03); padding:0.8rem; border-radius:8px;">
-          <div>
-            <div style="font-weight:700;">Wireless Noise-Canceling Headphones</div>
-            <div style="font-size:0.8rem; color:var(--text-muted);">Electronics • In Stock</div>
-          </div>
-          <div style="font-weight:800; color:#38bdf8;">$249.99</div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+
+            <!-- LOGO -->
+            <div class="navbar-brand">
+                <a href="#">
+                    <img src="static/images/logo.jpeg" alt="NexCart" class="brand-logo">
+                    <span class="brand-name">NexCart</span>
+                </a>
+            </div>
+
+            <!-- SEARCH BAR -->
+            <div class="navbar-search">
+                <form onsubmit="event.preventDefault(); triggerSearch();">
+                    <input type="text" id="searchInput" placeholder="Search products...">
+                    <button type="submit" aria-label="Search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- NAVIGATION LINKS -->
+            <div class="navbar-links" id="navbarMenu">
+                <a href="#"><i class="fa-solid fa-house"></i> Home</a>
+                <a href="#categories"><i class="fa-solid fa-layer-group"></i> Categories</a>
+                <a href="#featured"><i class="fa-solid fa-fire"></i> Featured</a>
+                <a href="#cart" onclick="event.preventDefault(); showToast('Your shopping cart is ready!');">
+                    <i class="fa-solid fa-cart-shopping"></i> Cart
+                    <span class="cart-badge-count" id="cartCount">0</span>
+                </a>
+                <a href="https://github.com/avipatel2004/NexCart-EcommerceWebsite" target="_blank" class="signup-button">
+                    <i class="fa-brands fa-github"></i> GitHub Repo
+                </a>
+            </div>
+
         </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; background: rgba(255,255,255,0.03); padding:0.8rem; border-radius:8px;">
-          <div>
-            <div style="font-weight:700;">Smart Fitness Watch Pro</div>
-            <div style="font-size:0.8rem; color:var(--text-muted);">Wearables • Featured</div>
-          </div>
-          <div style="font-weight:800; color:#38bdf8;">$199.50</div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <!-- Ambient Animated Background Glows -->
+            <div class="hero-ambient-glow" aria-hidden="true">
+                <div class="hero-glow-blob hero-glow-blob-1"></div>
+                <div class="hero-glow-blob hero-glow-blob-2"></div>
+            </div>
+
+            <div class="hero-content">
+                <img src="static/images/logo.jpeg" alt="NexCart" class="hero-logo">
+
+                <span class="hero-eyebrow"><i class="fa-solid fa-sparkles"></i> Next Level Shopping</span>
+
+                <h1>Welcome to NexCart</h1>
+                <p>Discover products from verified sellers in one trusted online marketplace. Shop with confidence, save more.</p>
+                <a href="#featured" class="btn btn-shine">
+                    <i class="fa-solid fa-bag-shopping"></i> Start Shopping
+                </a>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section class="categories" id="categories">
+            <div class="container">
+                <h2>Shop by Category</h2>
+                <div class="category-grid">
+
+                    <a href="#featured" class="category-card" onclick="filterCategory('Electronics')">
+                        <div class="category-icon-wrap cat-color-1">
+                            <i class="fa-solid fa-laptop"></i>
+                        </div>
+                        <h3>Electronics</h3>
+                        <p>Discover the latest electronics and gadgets.</p>
+                    </a>
+
+                    <a href="#featured" class="category-card" onclick="filterCategory('Fashion')">
+                        <div class="category-icon-wrap cat-color-2">
+                            <i class="fa-solid fa-shirt"></i>
+                        </div>
+                        <h3>Fashion</h3>
+                        <p>Explore trending fashion and apparel.</p>
+                    </a>
+
+                    <a href="#featured" class="category-card" onclick="filterCategory('Books')">
+                        <div class="category-icon-wrap cat-color-3">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                        <h3>Books &amp; Education</h3>
+                        <p>Learn and grow with our book collection.</p>
+                    </a>
+
+                    <a href="#featured" class="category-card" onclick="filterCategory('Sports')">
+                        <div class="category-icon-wrap cat-color-4">
+                            <i class="fa-solid fa-dumbbell"></i>
+                        </div>
+                        <h3>Sports &amp; Fitness</h3>
+                        <p>Everything you need for your fitness journey.</p>
+                    </a>
+
+                    <a href="#featured" class="category-card" onclick="filterCategory('Home')">
+                        <div class="category-icon-wrap cat-color-5">
+                            <i class="fa-solid fa-couch"></i>
+                        </div>
+                        <h3>Home &amp; Kitchen</h3>
+                        <p>Upgrade your living space with essential decor.</p>
+                    </a>
+
+                    <a href="#featured" class="category-card" onclick="filterCategory('Beauty')">
+                        <div class="category-icon-wrap cat-color-6">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <h3>Beauty &amp; Care</h3>
+                        <p>Premium cosmetics and personal care products.</p>
+                    </a>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Products Section -->
+        <section class="products-section" id="featured">
+            <div class="container">
+                <h2>Featured Products</h2>
+                <div class="product-grid" id="productContainer">
+
+                    <!-- Product 1 -->
+                    <div class="product-card" data-category="Electronics">
+                        <div class="product-image-wrap">
+                            <div class="product-image-placeholder">
+                                <i class="fa-solid fa-headphones"></i>
+                            </div>
+                            <div class="stock-badge in-stock">In Stock</div>
+                            <div class="discount-badge">-37%</div>
+                        </div>
+                        <div class="product-info">
+                            <p class="product-category">Electronics</p>
+                            <h3>AeroSound Pro Wireless ANC Headphones</h3>
+                            <p class="detail-label">SoundPro</p>
+                            <div class="product-price">
+                                <span class="old-price">₹3,999</span>
+                                <span class="new-price">₹2,499</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="product-btn btn-secondary" onclick="showToast('Viewing AeroSound Pro Headphones')">View Details</button>
+                                <button class="product-btn btn-primary" onclick="addToCart('AeroSound Pro Headphones')">
+                                    <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 2 -->
+                    <div class="product-card" data-category="Electronics">
+                        <div class="product-image-wrap">
+                            <div class="product-image-placeholder">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                            <div class="stock-badge in-stock">In Stock</div>
+                            <div class="discount-badge">-36%</div>
+                        </div>
+                        <div class="product-info">
+                            <p class="product-category">Wearables</p>
+                            <h3>UltraFit Smart Watch Pro</h3>
+                            <p class="detail-label">FitTech</p>
+                            <div class="product-price">
+                                <span class="old-price">₹2,999</span>
+                                <span class="new-price">₹1,899</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="product-btn btn-secondary" onclick="showToast('Viewing UltraFit Smart Watch Pro')">View Details</button>
+                                <button class="product-btn btn-primary" onclick="addToCart('UltraFit Smart Watch Pro')">
+                                    <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 3 -->
+                    <div class="product-card" data-category="Books">
+                        <div class="product-image-wrap">
+                            <div class="product-image-placeholder">
+                                <i class="fa-solid fa-book"></i>
+                            </div>
+                            <div class="stock-badge in-stock">In Stock</div>
+                            <div class="discount-badge">-33%</div>
+                        </div>
+                        <div class="product-info">
+                            <p class="product-category">Books &amp; Education</p>
+                            <h3>Python &amp; Django 6 E-Commerce Guide</h3>
+                            <p class="detail-label">Avi Patel</p>
+                            <div class="product-price">
+                                <span class="old-price">₹899</span>
+                                <span class="new-price">₹599</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="product-btn btn-secondary" onclick="showToast('Viewing Python & Django 6 Guide')">View Details</button>
+                                <button class="product-btn btn-primary" onclick="addToCart('Python & Django 6 Guide')">
+                                    <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 4 -->
+                    <div class="product-card" data-category="Home">
+                        <div class="product-image-wrap">
+                            <div class="product-image-placeholder">
+                                <i class="fa-solid fa-chair"></i>
+                            </div>
+                            <div class="stock-badge in-stock">In Stock</div>
+                            <div class="discount-badge">-25%</div>
+                        </div>
+                        <div class="product-info">
+                            <p class="product-category">Home &amp; Kitchen</p>
+                            <h3>Ergonomic High-Back Office Chair</h3>
+                            <p class="detail-label">ComfortLine</p>
+                            <div class="product-price">
+                                <span class="old-price">₹6,000</span>
+                                <span class="new-price">₹4,500</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="product-btn btn-secondary" onclick="showToast('Viewing Ergonomic Office Chair')">View Details</button>
+                                <button class="product-btn btn-primary" onclick="addToCart('Ergonomic Office Chair')">
+                                    <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" style="background:#071B30; color:#94A3B8; padding: 48px 0; text-align:center; border-top:1px solid #1E293B;">
+        <div class="container">
+            <div style="margin-bottom:16px;">
+                <img src="static/images/logo.jpeg" alt="NexCart Logo" style="width:40px; height:40px; border-radius:10px; display:inline-block; vertical-align:middle; margin-right:8px;">
+                <span style="font-family:'Manrope'; font-size:22px; font-weight:800; color:#FFF; vertical-align:middle;">NexCart</span>
+            </div>
+            <p style="margin-bottom:12px; font-size:14px;">A modern Django-based multi-vendor e-commerce marketplace.</p>
+            <p style="font-size:13px;">&copy; 2026 NexCart. All rights reserved. Created by <a href="https://github.com/avipatel2004" target="_blank" style="color:#2563EB; text-decoration:none; font-weight:600;">@avipatel2004</a>.</p>
         </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); padding:0.8rem; border-radius:8px;">
-          <div style="display:flex; align-items:center; gap:0.5rem;">
-            <i class="fa-solid fa-credit-card" style="color:#10b981;"></i>
-            <span style="font-weight:600; font-size:0.9rem;">Razorpay Payment Gateway</span>
-          </div>
-          <span style="font-size:0.75rem; background:#10b981; color:#000; padding:0.2rem 0.5rem; border-radius:4px; font-weight:700;">ACTIVE</span>
-        </div>
-      </div>
-    </div>
-  </section>
+    </footer>
 
-  <!-- Live Stats -->
-  <section class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-num">Django 6</div>
-      <div class="stat-label">Core Backend Framework</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">Razorpay</div>
-      <div class="stat-label">Seamless Checkout Flow</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">Multi-Vendor</div>
-      <div class="stat-label">Seller Dashboard & Orders</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">100%</div>
-      <div class="stat-label">Open Source Codebase</div>
-    </div>
-  </section>
-
-  <!-- Features Grid -->
-  <section id="features">
-    <div class="section-title">
-      <h2>Platform Features</h2>
-      <p>Built with enterprise standards for scalability, speed, and safety.</p>
-    </div>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fa-solid fa-store"></i></div>
-        <h3>Storefront & Catalog</h3>
-        <p>Interactive product categories, dynamic search filtering, featured items, and rich product description pages.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fa-solid fa-cart-shopping"></i></div>
-        <h3>Smart Shopping Cart</h3>
-        <p>Real-time session cart management, quantity calculation, wishlist integration, and coupon verification.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fa-solid fa-credit-card"></i></div>
-        <h3>Razorpay Integration</h3>
-        <p>Secure payment processing flow supporting cards, UPI, net banking, and order verification webhooks.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fa-solid fa-user-shield"></i></div>
-        <h3>Authentication & Security</h3>
-        <p>Email verification, protected user profiles, role-based authorization for customers and sellers.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fa-solid fa-chart-line"></i></div>
-        <h3>Seller Dashboard</h3>
-        <p>Comprehensive vendor operations panel to manage inventory, update product listings, and process orders.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fa-solid fa-truck-fast"></i></div>
-        <h3>Order Fulfillment</h3>
-        <p>Live status updates, order history tracking, invoice generation, and customer notification workflow.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Interactive Storefront Demo Section -->
-  <section id="demo" class="storefront-demo">
-    <div class="demo-header">
-      <div>
-        <h2 style="font-family:'Outfit'; font-size:2rem;">Storefront Interactive Demo</h2>
-        <p style="color:var(--text-muted); font-size:0.95rem;">Test sample cart interactions right here on GitHub Pages.</p>
-      </div>
-      <div style="display:flex; gap:1rem; align-items:center;">
-        <div class="category-tabs">
-          <button class="tab-btn active" onclick="filterCat('all')">All</button>
-          <button class="tab-btn" onclick="filterCat('tech')">Tech</button>
-          <button class="tab-btn" onclick="filterCat('fashion')">Fashion</button>
-        </div>
-        <div class="cart-indicator">
-          <i class="fa-solid fa-cart-shopping" style="color:#a855f7;"></i>
-          <span>Cart: <strong id="cart-count">0</strong></span>
-        </div>
-      </div>
+    <!-- Toast Feedback Element -->
+    <div id="toast" class="toast-notification">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toastMessage">Item added to cart!</span>
     </div>
 
-    <div class="product-grid">
-      <!-- Product 1 -->
-      <div class="product-card" data-cat="tech">
-        <div class="product-img"><i class="fa-solid fa-headphones"></i></div>
-        <div class="product-details">
-          <div class="product-cat">Audio • Tech</div>
-          <div class="product-title">AeroSound ANC Headphones</div>
-          <div class="product-footer">
-            <div class="product-price">$249</div>
-            <button class="btn-add-cart" onclick="addToCart()">+ Add to Cart</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Product 2 -->
-      <div class="product-card" data-cat="tech">
-        <div class="product-img"><i class="fa-solid fa-laptop"></i></div>
-        <div class="product-details">
-          <div class="product-cat">Computing • Tech</div>
-          <div class="product-title">ProBook Ultra 15" Laptop</div>
-          <div class="product-footer">
-            <div class="product-price">$1,199</div>
-            <button class="btn-add-cart" onclick="addToCart()">+ Add to Cart</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Product 3 -->
-      <div class="product-card" data-cat="fashion">
-        <div class="product-img"><i class="fa-solid fa-shirt"></i></div>
-        <div class="product-details">
-          <div class="product-cat">Apparel • Fashion</div>
-          <div class="product-title">Organic Cotton Hoodie</div>
-          <div class="product-footer">
-            <div class="product-price">$65</div>
-            <button class="btn-add-cart" onclick="addToCart()">+ Add to Cart</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Product 4 -->
-      <div class="product-card" data-cat="tech">
-        <div class="product-img"><i class="fa-solid fa-clock"></i></div>
-        <div class="product-details">
-          <div class="product-cat">Wearables • Tech</div>
-          <div class="product-title">Vortex Smartwatch Pro</div>
-          <div class="product-footer">
-            <div class="product-price">$189</div>
-            <button class="btn-add-cart" onclick="addToCart()">+ Add to Cart</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Quick Installation Guide -->
-  <section id="setup" class="install-section">
-    <div class="section-title" style="margin-top:2rem;">
-      <h2>Local Installation Guide</h2>
-      <p>Clone and run NexCart in under 2 minutes.</p>
-    </div>
-    <div class="code-box">
-      <button class="copy-btn" onclick="copyCode()"><i class="fa-regular fa-copy"></i> Copy</button>
-      <div id="cmd-text">
-# 1. Clone the repository<br>
-git clone https://github.com/avipatel2004/NexCart-EcommerceWebsite.git<br>
-cd NexCart-EcommerceWebsite<br><br>
-# 2. Install Python dependencies<br>
-pip install -r requirements.txt<br><br>
-# 3. Run database migrations & start server<br>
-python NexCart/manage.py migrate<br>
-python NexCart/manage.py runserver
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <p>© 2026 NexCart E-Commerce Marketplace. Maintained by <a href="https://github.com/avipatel2004" target="_blank">@avipatel2004</a>.</p>
-    <p style="margin-top:0.5rem; font-size:0.8rem;">Powered by Django 6.0 & GitHub Pages.</p>
-  </footer>
-
-  <script>
-    let cartCount = 0;
-    function addToCart() {
-      cartCount++;
-      document.getElementById('cart-count').innerText = cartCount;
-    }
-
-    function filterCat(cat) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-      const cards = document.querySelectorAll('.product-card');
-      cards.forEach(card => {
-        if (cat === 'all' || card.dataset.cat === cat) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
+    <!-- JavaScript Interactive Handlers -->
+    <script>
+        let count = 0;
+        function addToCart(itemName) {
+            count++;
+            document.getElementById('cartCount').innerText = count;
+            showToast(`Added ${itemName} to your cart!`);
         }
-      });
-    }
 
-    function copyCode() {
-      const text = document.getElementById('cmd-text').innerText;
-      navigator.clipboard.writeText(text);
-      const btn = document.querySelector('.copy-btn');
-      btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
-      setTimeout(() => {
-        btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy';
-      }, 2000);
-    }
-  </script>
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function triggerSearch() {
+            const query = document.getElementById('searchInput').value;
+            if(query) {
+                showToast(`Searching for "${query}"...`);
+            }
+        }
+
+        function filterCategory(catName) {
+            showToast(`Filtering by ${catName}...`);
+        }
+    </script>
+
 </body>
 </html>
